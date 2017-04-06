@@ -1,20 +1,27 @@
 package com.gavincai
 
+import java.util.concurrent.*;
 public class MainTest{
-	public static void main(String args[]){
-		int numberReport =0;
-		Boss boss = new Boss();
+	public static void main(String[] args) {
+        for (int index = 0; index < 10; index++) {
+            ExecutorService executorService = Executors.newFixedThreadPool(8);
+            CountDownLatch latch = new CountDownLatch(3);
 
-		Employee[] employeeArray = new Employee[3];
-		for(int i=0;i<employeeArray.length;i++){
-			employeeArray[i]= new Employee("Employee"+Integer.toString(i));
-			Thread ?? = new Thread(employeeArray[i]).start();
-		}
-		//the key is how to write the while loop?
-		while(numberReport!=employeeArray.length){
-			boss.wait();
-		}
-	}
+            Boss boss = new Boss(latch);
+            executorService.execute(boss);
+            for (int i = 0; i < 3; i++) {
+                Employee employee = new Employee("employee" + i, latch);
+                executorService.execute(employee);
+            }
+
+            executorService.shutdown();
+            try {
+                executorService.awaitTermination(10000, TimeUnit.DAYS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
 
 //start() 和 wait()的关系？？

@@ -1,28 +1,24 @@
 package com.gavincai
 public class Employee implements Runnable{
-	private boolean submitted;
 	private String name;
-	public Employee(String name) throws IllegalArgumentException{
+	private CountDownLatch latch;
+
+	public Employee(String name, CountDownLatch latch) throws IllegalArgumentException{
 		if (name==null) {
 			throw new IllegalArgumentException("name can not be null");
 		}
-		try{
-			this.name = name;
-		}catch(IllegalArgumentException e){
-			System.out.println("the name is incorrect");
-		}
-		submitted = false;
+		this.name = name;
+		this.latch = latch;
 	}
-	public String getName(){
-		return name;
-	}
-	public boolean submitted(){
-		return submitted;
-	}
+	@Override
 	public void run(){
-		this.giveReport();
-	}
-	public giveReport(){
-		submitted=true;
+		Thread t = Thread.currentThread();
+		try{
+			thread.sleep(300 + (int) (Math.random() * 2000));
+            System.out.println(thread + name + " Employee process is done");
+            latch.countDown();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 }
